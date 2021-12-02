@@ -109,6 +109,4 @@ class FactureController extends AbstractController
             'file.pdf'
         );
     }
-
-
 }
