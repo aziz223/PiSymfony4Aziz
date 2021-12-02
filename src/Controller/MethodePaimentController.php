@@ -90,4 +90,17 @@ class MethodePaimentController extends AbstractController
 
         return $this->redirectToRoute('methode_paiment_index', [], Response::HTTP_SEE_OTHER);
     }
+
+
+    /**
+     * @Route("/notif", name="notif", methods={"POST"})
+     */
+    public function sendNotification(Request $request)
+    {
+      $manager = $this->get('mgilet.notification');
+      $notif = $manager->createNotification('Hello world!');
+      $notif->setMessage('This a notification.');
+      $notif->setLink('https://symfony.com/');
+      $manager->addNotification(array($this->getUser()), $notif, true);
+    }
 }

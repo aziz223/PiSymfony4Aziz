@@ -98,10 +98,15 @@ class FactureController extends AbstractController
      */
     public function pdfAction()
     {
-        $knpSnappyPdf->generate('http://www.google.fr', '/Desktop/file.pdf');
-
-        $html = $this->render('facture/show.html.twig', [
-            'facture' => $facture,
+        $knpSnappyPdf->generateFromHtml(
+        $this->render('facture/index.html.twig', [
+            'factures' => $factureRepository->findAll(),
+        ]),
+        'D:\xampp\htdocs\azizpi\var\cache\dev\snappy\file.pdf'
+         );
+         
+        $html = $this->render('facture/index.html.twig', [
+            'factures' => $factureRepository->findAll(),
         ]);
 
         return new PdfResponse(
