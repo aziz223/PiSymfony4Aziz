@@ -1,0 +1,13 @@
+{% extends 'base-back.html.twig' %}
+
+{% block title %}Edit MethodePaiment{% endblock %}
+
+{% block body %}
+    <h1>Edit MethodePaiment</h1>
+
+    {{ include('methode_paiment/_form.html.twig', {'button_label': 'Update'}) }}
+
+    <a href="{{ path('methode_paiment_index') }}">back to list</a>
+
+    {{ include('methode_paiment/_delete_form.html.twig') }}
+{% endblock %}

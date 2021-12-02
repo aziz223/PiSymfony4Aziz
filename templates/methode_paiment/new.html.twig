@@ -1,0 +1,11 @@
+{% extends 'base-back.html.twig' %}
+
+{% block title %}New MethodePaiment{% endblock %}
+
+{% block body %}
+    <h1>Create new MethodePaiment</h1>
+
+    {{ include('methode_paiment/_form.html.twig') }}
+
+    <a href="{{ path('methode_paiment_index') }}">back to list</a>
+{% endblock %}

@@ -1,0 +1,30 @@
+{% extends 'base-back.html.twig' %}
+
+{% block title %}MethodePaiment{% endblock %}
+
+{% block body %}
+    <h1>MethodePaiment</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ methode_paiment.id }}</td>
+            </tr>
+            <tr>
+                <th>Methode</th>
+                <td>{{ methode_paiment.methode }}</td>
+            </tr>
+            <tr>
+                <th>Type_paiment</th>
+                <td>{{ methode_paiment.typePaiment }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('methode_paiment_index') }}">back to list</a>
+
+    <a href="{{ path('methode_paiment_edit', {'id': methode_paiment.id}) }}">edit</a>
+
+    {{ include('methode_paiment/_delete_form.html.twig') }}
+{% endblock %}
