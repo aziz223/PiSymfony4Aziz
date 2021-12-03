@@ -10,7 +10,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Knp\Bundle\SnappyBundle\Snappy\Response\PdfResponse;
+use Knp\Component\Pager\PaginatorInterface;
+use Symfony\UX\Chartjs\Builder\ChartBuilderInterface;
+use Symfony\UX\Chartjs\Model\Chart;
 
 /**
  * @Route("/facture")
@@ -21,11 +23,27 @@ class FactureController extends AbstractController
     /**
      * @Route("/", name="facture_index", methods={"GET"})
      */
-    public function index(FactureRepository $factureRepository): Response
+    public function index(Request $request, PaginatorInterface $paginator): Response
     {
-        return $this->render('facture/index.html.twig', [
-            'factures' => $factureRepository->findAll(),
-        ]);
+
+        // Retrieve the entity manager of Doctrine
+        $em = $this->getDoctrine()->getManager();
+        
+        // Get some repository of data, in our case we have an Appointments entity
+        $factureRepository = $em->getRepository(Facture::class);
+                        
+        // Find all the data on the Appointments table, filter your query as you need
+        $query = $factureRepository->createQueryBuilder('p')
+        ->getQuery();
+
+        $pagination = $paginator->paginate(
+            $query, 
+            $request->query->getInt('page', 1), 
+            3 
+        );
+    
+        // parameters to template
+        return $this->render('facture/index.html.twig', ['factures' => $pagination]);
     }
 
     /**
@@ -114,4 +132,36 @@ class FactureController extends AbstractController
             'file.pdf'
         );
     }
+
+
+    
+    /**
+     * @Route("search", name="ajax_search", methods={"GET"})
+     */
+        public function searchAction(Request $request)
+        {
+            $em = $this->getDoctrine()->getManager();
+      
+            $requestString = $request->get('q');
+      
+            $entities =  $em->getRepository('App:Facture')->findEntitiesByString($requestString);
+      
+            if(!$entities) {
+                $result['entities']['error'] = "search not found";
+            } else {
+                $result['entities'] = $this->getRealEntities($entities);
+            }
+      
+            return new Response(json_encode($result));
+        }
+      
+        public function getRealEntities($entities){
+      
+            foreach ($entities as $entity){
+                $realEntities[$entity->getId()] = $entity->getNomUser();
+            }
+      
+            return $realEntities;
+        }
+
 }

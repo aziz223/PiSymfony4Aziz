@@ -10,6 +10,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\UX\Chartjs\Builder\ChartBuilderInterface;
+use Symfony\UX\Chartjs\Model\Chart;
 
 /**
  * @Route("/methode/paiment")
@@ -19,10 +21,31 @@ class MethodePaimentController extends AbstractController
     /**
      * @Route("/", name="methode_paiment_index", methods={"GET"})
      */
-    public function index(MethodePaimentRepository $methodePaimentRepository): Response
+    public function index(MethodePaimentRepository $methodePaimentRepository, ChartBuilderInterface $chartBuilder): Response
     {
+        $chart = $chartBuilder->createChart(Chart::TYPE_LINE);
+        $chart->setData([
+            'labels' => ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+            'datasets' => [
+                [
+                    'label' => 'My First dataset',
+                    'backgroundColor' => 'rgb(255, 99, 132)',
+                    'borderColor' => 'rgb(255, 99, 132)',
+                    'data' => [0, 10, 5, 2, 20, 30, 45],
+                ],
+            ],
+        ]);
+
+        $chart->setOptions([
+            'scales' => [
+                'yAxes' => [
+                    ['ticks' => ['min' => 0, 'max' => 100]],
+                ],
+            ],
+        ]);
         return $this->render('methode_paiment/index.html.twig', [
             'methode_paiments' => $methodePaimentRepository->findAll(),
+            'chart' => $chart,
         ]);
     }
 
@@ -91,16 +114,36 @@ class MethodePaimentController extends AbstractController
         return $this->redirectToRoute('methode_paiment_index', [], Response::HTTP_SEE_OTHER);
     }
 
-
     /**
-     * @Route("/notif", name="notif", methods={"POST"})
+     * @Route("/", name="chart")
      */
-    public function sendNotification(Request $request)
+    public function chart(ChartBuilderInterface $chartBuilder): Response
     {
-      $manager = $this->get('mgilet.notification');
-      $notif = $manager->createNotification('Hello world!');
-      $notif->setMessage('This a notification.');
-      $notif->setLink('https://symfony.com/');
-      $manager->addNotification(array($this->getUser()), $notif, true);
+        $chart = $chartBuilder->createChart(Chart::TYPE_LINE);
+        $chart->setData([
+            'labels' => ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+            'datasets' => [
+                [
+                    'label' => 'My First dataset',
+                    'backgroundColor' => 'rgb(255, 99, 132)',
+                    'borderColor' => 'rgb(255, 99, 132)',
+                    'data' => [0, 10, 5, 2, 20, 30, 45],
+                ],
+            ],
+        ]);
+
+        $chart->setOptions([
+            'scales' => [
+                'yAxes' => [
+                    ['ticks' => ['min' => 0, 'max' => 100]],
+                ],
+            ],
+        ]);
+
+        return $this->render('methode_paiment/chart.html.twig', [
+            'chart' => $chart,
+        ]);
     }
+
+
 }

@@ -47,4 +47,14 @@ class FactureRepository extends ServiceEntityRepository
         ;
     }
     */
+    public function findEntitiesByString($str){
+        return $this->getEntityManager()
+            ->createQuery(
+                'SELECT e
+                FROM App:Facture e
+                WHERE e.nom_user LIKE :str'
+            )
+            ->setParameter('str', '%'.$str.'%')
+            ->getResult();
+    }
 }
